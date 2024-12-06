@@ -14,15 +14,15 @@ object Day02 extends Day[Array[Int]]:
   private val decreasing: Monotonic =
     (report, i, j) => increasing(report, j, i)
 
-  def parse(line: String): Option[Array[Int]] =
+  def parse(line: String): Option[Input] =
     Some(line.split("\\s+").map(_.toInt))
 
-  private def safeReport(report: Array[Int]) =
+  private def safeReport(report: Input) =
     def isSafely(monotonic: Monotonic) =
       report.indices.forall(i => monotonic(report, i, i + 1))
     isSafely(increasing) || isSafely(decreasing)
 
-  def safeReport1(report: Array[Int]): Boolean =
+  def safeReport1(report: Input): Boolean =
     def isSafely(monotonic: Monotonic) =
       @tailrec def isSafe(i: Int, rm: Boolean): Boolean =
         if i >= report.length then true

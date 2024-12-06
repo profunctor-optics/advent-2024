@@ -4,6 +4,8 @@ import scala.io.Source
 import scala.util.{Failure, Success, Using}
 
 trait Day[I]:
+  type Input = I
+  
   def parse(line: String): Option[I]
 
   def withResource[R](file: String)(solve: Iterator[I] => R): R =

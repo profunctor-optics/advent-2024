@@ -5,17 +5,17 @@ object Day04 extends Day[Array[Char]]:
     assert(word.nonEmpty, "empty word")
     assert(text.nonEmpty, "empty text")
 
-    private val wl = word.length
-    private val wh = wl / 2
-    private val xb = text.indices
-    private val yb = text.head.indices
+    private val len = word.length
+    private val mid = len / 2
+    private val row = text.indices
+    private val col = text.head.indices
 
-    def this(lines: Iterator[Array[Char]], word: String) =
+    def this(lines: Iterator[Input], word: String) =
       this(lines.toArray, word)
 
     private def foundAt(i: Int, j: Int)(di: Int, dj: Int): Boolean =
-      if !xb.contains(i + di * (wl - 1)) then return false
-      if !yb.contains(j + dj * (wl - 1)) then return false
+      if !row.contains(i + di * (len - 1)) then return false
+      if !col.contains(j + dj * (len - 1)) then return false
       var ci = i
       var cj = j
       val it = word.iterator
@@ -26,11 +26,12 @@ object Day04 extends Day[Array[Char]]:
         else return false
       true
 
-    private def crossAt(i: Int, j: Int) =
-      (foundAt(i - wh, j - wh)(1, 1) || foundAt(i + wh, j + wh)(-1, -1))
-        && (foundAt(i - wh, j + wh)(1, -1) || foundAt(i + wh, j - wh)(-1, 1))
+    private def crossAt(i: Int, j: Int) = text(i)(j) == word(mid)
+      && (foundAt(i - mid, j - mid)(+1, +1) || foundAt(i + mid, j + mid)(-1, -1))
+      && (foundAt(i - mid, j + mid)(+1, -1) || foundAt(i + mid, j - mid)(-1, +1))
 
-    private def countAt(i: Int, j: Int) =
+    private def countAt(i: Int, j: Int): Int =
+      if text(i)(j) != word.head then return 0
       val words = for
         di <- (-1 to 1).iterator
         dj <- (-1 to 1).iterator
@@ -40,21 +41,21 @@ object Day04 extends Day[Array[Char]]:
 
     def countAll: Int =
       val words = for
-        i <- xb.iterator
-        j <- yb.iterator
+        i <- row.iterator
+        j <- col.iterator
       yield countAt(i, j)
       words.sum
 
     def crossAll: Int =
-      if wl % 2 == 0 then return 0
+      if len % 2 == 0 then return 0
       val words = for
-        i <- (wh until xb.end - wh).iterator
-        j <- (wh until yb.end - wh).iterator
+        i <- (mid until row.end - mid).iterator
+        j <- (mid until col.end - mid).iterator
         if crossAt(i, j)
       yield 1
       words.sum
 
-  def parse(line: String): Option[Array[Char]] =
+  def parse(line: String): Option[Input] =
     Some(line.toCharArray)
 
   def part1(file: String): Int =
