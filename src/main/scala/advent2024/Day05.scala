@@ -5,7 +5,7 @@ import scala.collection.immutable.{BitSet, IntMap}
 object Day05 extends Day:
   type Input = Either[(Int, Int), Array[Int]]
 
-  private class State(var after: IntMap[BitSet]):
+  private class Printer(var after: IntMap[BitSet]):
     def this() = this(IntMap.empty)
 
     private def isAfter(p: Int) =
@@ -36,7 +36,6 @@ object Day05 extends Day:
       if fixed then queue(length / 2).toLong else 0L
 
     def sortedSum(fix: Boolean)(input: Iterator[Input]): Long =
-      after = IntMap.empty
       val (pairs, queues) = input.span(_.isLeft)
       for case Left((p, q)) <- pairs do add(p, q)
       (for case Right(queue) <- queues yield sortedMid(queue, fix)).sum
@@ -47,10 +46,10 @@ object Day05 extends Day:
     case _ => None
 
   def part1(file: String): Long =
-    withResource(file)(State().sortedSum(fix = false))
+    withResource(file)(Printer().sortedSum(fix = false))
 
   def part2(file: String): Long =
-    withResource(file)(State().sortedSum(fix = true))
+    withResource(file)(Printer().sortedSum(fix = true))
 
   def main(args: Array[String]): Unit =
     println(part1("day05.txt"))

@@ -16,7 +16,7 @@ class Day04Test extends munit.FunSuite:
     |""".stripMargin.trim
 
   test("count all XMAS in the sample"):
-    val search = Day04.TextSearch(xmas.linesIterator.map(_.toCharArray), "XMAS")
+    val search = Day04.TextSearch(xmas.linesIterator.map(IArray.from), "XMAS")
     assertEquals(search.countAll, 4)
 
   test("count all XMAS in the file"):
@@ -24,7 +24,7 @@ class Day04Test extends munit.FunSuite:
     assertEquals(actual, 18)
 
   test("cross all MAS in the sample"):
-    val search = Day04.TextSearch(mas.linesIterator.map(_.toCharArray), "MAS")
+    val search = Day04.TextSearch(mas.linesIterator.map(IArray.from), "MAS")
     assertEquals(search.crossAll, 1)
 
   test("cross all MAS in the file"):

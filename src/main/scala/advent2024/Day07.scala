@@ -3,7 +3,7 @@ package advent2024
 import scala.annotation.switch
 
 object Day07 extends Day:
-  type Input = (Long, Array[Int])
+  type Input = (Long, List[Int])
 
   enum Op:
     case Add, Mul, Concat
@@ -25,32 +25,24 @@ object Day07 extends Day:
     private def orderOf(m: Int) =
       pow10(pow10.indexWhere(m < _))
 
-    // assumes only positive measurements
-    def evaluateTo(test: Long, measures: Array[Int])(ops: List[Op]): Boolean =
-      val opsIter = ops.iterator
-      val msIter = measures.iterator
-      if !msIter.hasNext then return false
-      var result = msIter.next().toLong
-      while result <= test && opsIter.hasNext && msIter.hasNext
-      do result = opsIter.next().eval(result, msIter.next())
-      result == test && opsIter.isEmpty && msIter.isEmpty
+    // assumes only positive measures
+    def areCalibrated(ops: Seq[Op])(test: Long, measures: List[Int]): Boolean =
+      def check(acc: Long, measures: List[Int]): Boolean = measures match
+        case Nil => acc == test
+        case _ if acc > test => false
+        case m :: ms => ops.exists(op => check(op.eval(acc, m), ms))
 
-  private def isCalibrated(possible: Seq[Op])(test: Long, measures: Array[Int]): Boolean =
-    if measures.isEmpty then return false
-    if measures.length == 1 then return measures.head == test
-    val indices = 0 until measures.length - 2
-    val initial = possible.iterator.map(_ :: Nil)
-    val combinations = indices.foldLeft(initial): (ops, _) =>
-      ops.flatMap(ops => possible.iterator.map(_ :: ops))
-    combinations.exists(Op.evaluateTo(test, measures))
+      measures match
+        case m :: ms => check(m, ms)
+        case Nil => false
 
   private def calibratedSum(ops: Op*)(input: Iterator[Input]) =
-    input.filter(isCalibrated(ops)).map(_._1).sum
+    input.filter(Op.areCalibrated(ops)).map(_._1).sum
 
   def parse(line: String): Option[Input] = line.split(':') match
     case Array(test, rest) =>
-      val measurements = rest.trim.split(' ').map(_.toInt)
-      Option.when(measurements.forall(_ > 0))(test.toLong -> measurements)
+      val measures = rest.trim.split(' ').iterator.map(_.toInt).toList
+      Option.when(measures.forall(_ > 0))(test.toLong -> measures)
     case _ =>
       None
 

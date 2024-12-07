@@ -8,8 +8,8 @@ object Day02 extends Day:
   private val safeRange = 1 to 3
 
   private val increasing: Monotonic = (report, i, j) =>
-    val indices = report.indices
-    !indices.contains(i) || !indices.contains(j)
+    val bounds = report.indices
+    !bounds.contains(i) || !bounds.contains(j)
     || safeRange.contains(report(j) - report(i))
 
   private val decreasing: Monotonic =
@@ -25,14 +25,14 @@ object Day02 extends Day:
 
   def safeReport1(report: Input): Boolean =
     def isSafely(monotonic: Monotonic) =
-      @tailrec def isSafe(i: Int, rm: Boolean): Boolean =
+      @tailrec def loop(i: Int, rm: Boolean): Boolean =
         if i >= report.length then true
-        else if monotonic(report, i, i + 1) then isSafe(i + 1, rm)
+        else if monotonic(report, i, i + 1) then loop(i + 1, rm)
         else if rm then false // prefer to remove the second level
-        else if monotonic(report, i, i + 2) then isSafe(i + 2, rm = true)
-        else if monotonic(report, i - 1, i + 1) then isSafe(i + 1, rm = true)
+        else if monotonic(report, i, i + 2) then loop(i + 2, rm = true)
+        else if monotonic(report, i - 1, i + 1) then loop(i + 1, rm = true)
         else false
-      isSafe(0, rm = false)
+      loop(0, rm = false)
     isSafely(increasing) || isSafely(decreasing)
 
   def part1(file: String): Int =

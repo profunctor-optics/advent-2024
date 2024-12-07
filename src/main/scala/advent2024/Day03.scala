@@ -1,5 +1,6 @@
 package advent2024
 
+import scala.annotation.tailrec
 import scala.util.matching.Regex
 
 object Day03 extends Day:
@@ -17,16 +18,15 @@ object Day03 extends Day:
     memory.flatMap(mul.findAllMatchIn).map(multiply).sum
 
   def computeCond(memory: Iterator[String]): Long =
-    var enabled = true
-    var sum = 0L
     val matches = memory.flatMap(mulCond.findAllMatchIn)
-    while matches.hasNext do
-      val m = matches.next()
-      m.matched match
-        case "do()" => enabled = true
-        case "don't()" => enabled = false
-        case _ => if enabled then sum += multiply(m)
-    sum
+    @tailrec def loop(enabled: Boolean, sum: Long): Long =
+      matches.nextOption() match
+        case Some(m) if m.matched == "do()" => loop(true, sum)
+        case Some(m) if m.matched == "don't()" => loop(false, sum)
+        case Some(m) if enabled => loop(enabled, sum + multiply(m))
+        case Some(_) => loop(enabled, sum)
+        case None => sum
+    loop(true, 0L)
 
   def part1(file: String): Long =
     withResource(file)(compute)

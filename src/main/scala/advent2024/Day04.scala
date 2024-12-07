@@ -1,9 +1,11 @@
 package advent2024
 
+import scala.annotation.tailrec
+
 object Day04 extends Day:
-  type Input = Array[Char]
-  
-  class TextSearch(text: Array[Array[Char]], word: String):
+  type Input = IArray[Char]
+
+  class TextSearch(text: IArray[IArray[Char]], word: String):
     assert(word.nonEmpty, "empty word")
     assert(text.nonEmpty, "empty text")
 
@@ -13,20 +15,17 @@ object Day04 extends Day:
     private val col = text.head.indices
 
     def this(lines: Iterator[Input], word: String) =
-      this(lines.toArray, word)
+      this(IArray.from(lines), word)
 
     private def foundAt(i: Int, j: Int)(di: Int, dj: Int): Boolean =
       if !row.contains(i + di * (len - 1)) then return false
       if !col.contains(j + dj * (len - 1)) then return false
-      var ci = i
-      var cj = j
       val it = word.iterator
-      while it.hasNext do
-        if text(ci)(cj) == it.next() then
-          ci += di
-          cj += dj
-        else return false
-      true
+      @tailrec def loop(i: Int, j: Int): Boolean = it.nextOption() match
+        case Some(c) if c == text(i)(j) => loop(i + di, j + dj)
+        case Some(_) => false
+        case None => true
+      loop(i, j)
 
     private def crossAt(i: Int, j: Int) = text(i)(j) == word(mid)
       && (foundAt(i - mid, j - mid)(+1, +1) || foundAt(i + mid, j + mid)(-1, -1))
@@ -58,7 +57,7 @@ object Day04 extends Day:
       words.sum
 
   def parse(line: String): Option[Input] =
-    Some(line.toCharArray)
+    Some(IArray.unsafeFromArray(line.toCharArray))
 
   def part1(file: String): Int =
     withResource(file)(TextSearch(_, "XMAS").countAll)
