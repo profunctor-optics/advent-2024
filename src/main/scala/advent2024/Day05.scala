@@ -2,7 +2,9 @@ package advent2024
 
 import scala.collection.immutable.{BitSet, IntMap}
 
-object Day05 extends Day[Either[(Int, Int), Array[Int]]]:
+object Day05 extends Day:
+  type Input = Either[(Int, Int), Array[Int]]
+
   private class State(var after: IntMap[BitSet]):
     def this() = this(IntMap.empty)
 
@@ -12,6 +14,7 @@ object Day05 extends Day[Either[(Int, Int), Array[Int]]]:
     private def add(p: Int, q: Int): Unit =
       after += p -> isAfter(p).incl(q)
 
+    // bubble sort
     private def sortedMid(queue: Array[Int], fix: Boolean): Long =
       def swap(i: Int, j: Int): Boolean =
         val tmp = queue(i)
@@ -37,12 +40,6 @@ object Day05 extends Day[Either[(Int, Int), Array[Int]]]:
       val (pairs, queues) = input.span(_.isLeft)
       for case Left((p, q)) <- pairs do add(p, q)
       (for case Right(queue) <- queues yield sortedMid(queue, fix)).sum
-
-  private def swap(queue: Array[Int])(i: Int, j: Int): Boolean =
-    val tmp = queue(i)
-    queue(i) = queue(j)
-    queue(j) = tmp
-    true
 
   def parse(line: String): Option[Input] = line.split('|') match
     case Array(lt, gt) => Some(Left((lt.toInt, gt.toInt)))

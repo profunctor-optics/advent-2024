@@ -1,6 +1,8 @@
 package advent2024
 
-object Day04 extends Day[Array[Char]]:
+object Day04 extends Day:
+  type Input = Array[Char]
+  
   class TextSearch(text: Array[Array[Char]], word: String):
     assert(word.nonEmpty, "empty word")
     assert(text.nonEmpty, "empty text")

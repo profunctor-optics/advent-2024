@@ -2,8 +2,9 @@ package advent2024
 
 import scala.annotation.tailrec
 
-object Day02 extends Day[Array[Int]]:
-  private type Monotonic = (Array[Int], Int, Int) => Boolean
+object Day02 extends Day:
+  type Input = Array[Int]
+  private type Monotonic = (Input, Int, Int) => Boolean
   private val safeRange = 1 to 3
 
   private val increasing: Monotonic = (report, i, j) =>
@@ -27,7 +28,7 @@ object Day02 extends Day[Array[Int]]:
       @tailrec def isSafe(i: Int, rm: Boolean): Boolean =
         if i >= report.length then true
         else if monotonic(report, i, i + 1) then isSafe(i + 1, rm)
-        else if rm then false
+        else if rm then false // prefer to remove the second level
         else if monotonic(report, i, i + 2) then isSafe(i + 2, rm = true)
         else if monotonic(report, i - 1, i + 1) then isSafe(i + 1, rm = true)
         else false

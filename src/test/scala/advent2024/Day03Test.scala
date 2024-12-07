@@ -16,7 +16,7 @@ class Day03Test extends munit.FunSuite:
     val actual = Day03.computeCond(Iterator.single(memory))
     assertEquals(actual, 161L)
 
-  test("do not compute invalid instructions"):
+  test("not compute invalid instructions"):
     val invalid = List("mul(4*", "mul(6,9!", "?(12,34)", "mul ( 2 , 4 )")
     assertEquals(Day03.compute(invalid.iterator), 0L)
     assertEquals(Day03.computeCond(invalid.iterator), 0L)

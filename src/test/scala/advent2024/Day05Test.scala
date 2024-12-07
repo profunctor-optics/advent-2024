@@ -1,7 +1,7 @@
 package advent2024
 
 class Day05Test extends munit.FunSuite:
-  test("sums all sorted queues"):
+  test("sum all sorted queues"):
     val actual = Day05.part1("day05.test.txt")
     assertEquals(actual, 143L)
 

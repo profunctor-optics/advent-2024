@@ -1,6 +1,8 @@
 package advent2024
 
-object Day01 extends Day[(Int, Int)]:
+object Day01 extends Day:
+  type Input = (Int, Int)
+  
   def parse(line: String): Option[Input] = line.split("\\s+") match
     case Array(left, right) => Some((left.toInt, right.toInt))
     case _ => None

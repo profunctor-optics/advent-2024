@@ -3,12 +3,12 @@ package advent2024
 import scala.io.Source
 import scala.util.{Failure, Success, Using}
 
-trait Day[I]:
-  type Input = I
+trait Day:
+  type Input
   
-  def parse(line: String): Option[I]
+  def parse(line: String): Option[Input]
 
-  def withResource[R](file: String)(solve: Iterator[I] => R): R =
+  def withResource[R](file: String)(solve: Iterator[Input] => R): R =
     def doParse(line: String, i: Int) =
       parse(line).getOrElse(throw new IllegalArgumentException(s"Unexpected input on line #$i: $line"))
     def doSolve(source: Source) =

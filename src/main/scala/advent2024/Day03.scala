@@ -2,7 +2,8 @@ package advent2024
 
 import scala.util.matching.Regex
 
-object Day03 extends Day[String]:
+object Day03 extends Day:
+  type Input = String
   private val mul = """mul\((\d{1,3}),(\d{1,3})\)""".r
   private val mulCond = s"do\\(\\)|don't\\(\\)|$mul".r
 
