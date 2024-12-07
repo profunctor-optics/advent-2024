@@ -1,14 +1,21 @@
 package advent2024
 
+import java.time.Duration
 import scala.io.Source
 import scala.util.{Failure, Success, Using}
 
 trait Day:
   type Input
-  
-  def parse(line: String): Option[Input]
 
-  def withResource[R](file: String)(solve: Iterator[Input] => R): R =
+  protected def parse(line: String): Option[Input]
+
+  final def timed[T](task: => T): (T, Duration) =
+    val start = System.nanoTime()
+    val result = task
+    val end = System.nanoTime()
+    (result, Duration.ofNanos(end - start))
+
+  final def withResource[R](file: String)(solve: Iterator[Input] => R): R =
     def doParse(line: String, i: Int) =
       parse(line).getOrElse(throw new IllegalArgumentException(s"Unexpected input on line #$i: $line"))
     def doSolve(source: Source) =
