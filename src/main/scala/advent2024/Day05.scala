@@ -38,14 +38,14 @@ case object Day05 extends Day:
       for case Left((p, q)) <- pairs do add(p, q)
       (for case Right(queue) <- queues yield sortedMid(queue, fix)).sum
 
-  def parse(line: String): Option[Input] = line.split('|') match
+  def parse(line: String): Parsed[Input] = line.split('|') match
     case Array(lt, gt) =>
-      Some(Left((lt.toInt, gt.toInt)))
+      Right(Left(lt.toInt -> gt.toInt))
     case Array(line) =>
       val queue = line.split(',').map(_.toInt)
-      Option.when(queue.length % 2 == 1)(Right(queue))
+      Either.cond(queue.length % 2 == 1, Right(queue), "even queue")
     case _ =>
-      None
+      Left("malformed rule")
 
   def part1(file: String): Long =
     withResource(file)(Printer().sortedSum(fix = false))

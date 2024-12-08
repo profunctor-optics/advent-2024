@@ -12,9 +12,9 @@ case object Day01 extends Day:
     val frequencies = right.groupMapReduce(identity)(_ => 1)(_ + _)
     left.iterator.map(loc => loc.toLong * frequencies.getOrElse(loc, 0)).sum
 
-  def parse(line: String): Option[Input] = line.split("\\s+") match
-    case Array(left, right) => Some((left.toInt, right.toInt))
-    case _ => None
+  def parse(line: String): Parsed[Input] = line.split("\\s+") match
+    case Array(left, right) => Right(left.toInt -> right.toInt)
+    case _ => Left("expected two locations")
 
   def part1(file: String): Long =
     withResource(file)(totalDistance)

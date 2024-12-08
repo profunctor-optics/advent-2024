@@ -6,17 +6,17 @@ case object Day07 extends Day:
   type Input = (Long, List[Int])
 
   enum Op:
-    case Add, Mul, Concat
+    case Add, Mul, Cat
 
     private def eval(i: Long, j: Int) = (this: @switch) match
       case Add => i + j
       case Mul => i * j
-      case Concat => i * Op.orderOf(j) + j
+      case Cat => i * Op.orderOf(j) + j
 
     override def toString: String = this match
       case Add => "+"
       case Mul => "*"
-      case Concat => "||"
+      case Cat => "||"
 
   private object Op:
     private val pow10 =
@@ -39,12 +39,12 @@ case object Day07 extends Day:
   private def calibratedSum(ops: Op*)(input: Iterator[Input]) =
     input.filter(Op.areCalibrated(ops)).map(_._1).sum
 
-  def parse(line: String): Option[Input] = line.split(':') match
+  def parse(line: String): Parsed[Input] = line.split(':') match
     case Array(test, rest) =>
       val measures = rest.trim.split(' ').iterator.map(_.toInt).toList
-      Option.when(measures.forall(_ > 0))(test.toLong -> measures)
+      Either.cond(measures.forall(_ > 0), test.toLong -> measures, "non-positive measures")
     case _ =>
-      None
+      Left("malformed test")
 
   def part1(file: String): Long =
     withResource(file)(calibratedSum(Op.Add, Op.Mul))

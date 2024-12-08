@@ -33,8 +33,8 @@ case object Day02 extends Day:
       loop(0, rm = false)
     isSafely(increasing) || isSafely(decreasing)
 
-  def parse(line: String): Option[Input] =
-    Some(IArray.unsafeFromArray(line.split("\\s+").map(_.toInt)))
+  def parse(line: String): Parsed[Input] =
+    Right(IArray.unsafeFromArray(line.split("\\s+").map(_.toInt)))
 
   def part1(file: String): Int =
     withResource(file)(_.count(safeReport))

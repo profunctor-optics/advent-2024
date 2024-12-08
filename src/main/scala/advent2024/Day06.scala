@@ -24,12 +24,11 @@ case object Day06 extends Day:
   private class Guard(lab: Array[Array[Point]], var i: Int, var j: Int):
     private def point = lab(i)(j)
     private var heading = point
-    private val si = i
-    private val sj = j
+    private val start = (i, j)
     private val x = lab.length
     private val y = lab.head.length
 
-    var visited = 0
+    var visited = 1
     var obstructed = 0
 
     private def moveTo(pos: (Int, Int)): this.type =
@@ -42,7 +41,7 @@ case object Day06 extends Day:
       this
 
     def reset(): this.type =
-      moveTo(si, sj).headTo(lab(si)(sj))
+      moveTo(start).headTo(point)
 
     private def nextPosition = heading match
       case Point.Left => (i, j - 1)
@@ -75,23 +74,23 @@ case object Day06 extends Day:
         lab(i)(j) = heading
         visited += 1
 
-    private def move(track: Boolean) =
+    private def move(simulate: Boolean) =
       var turned = 0
       while isBlocked && turned < 4 do
         headTo(nextHeading)
         turned += 1
-      if track then this.track()
+      if !simulate then track()
       if turned < 4 then moveTo(nextPosition)
       turned > 0
 
-    def patrol(track: Boolean): this.type =
+    def patrol(simulate: Boolean): this.type =
       if point.isBlocked then return this
       val turns = mutable.Set.empty[(Int, Int, Point)]
       var stuck = false
       while !stuck && !isLeaving
-      do if move(track) then stuck = !turns.add((i, j, heading))
-      if track then this.track()
-      if stuck then obstructed += 1
+      do if move(simulate) then stuck = !turns.add((i, j, heading))
+      if !simulate then track()
+      else if stuck then obstructed += 1
       this
 
   def solve(input: Iterator[Input]): (Int, Int) =
@@ -102,27 +101,26 @@ case object Day06 extends Day:
       i <- lab.indices.iterator
       j <- lab(i).indices
       if lab(i)(j).isVisited
-    yield try Guard(lab, i, j)
-    finally lab(i)(j) = Point.Blank
+    yield Guard(lab, i, j)
 
     val guard = initial.nextOption() match
-      case Some(guard) => guard.patrol(track = true)
+      case Some(guard) => guard.patrol(simulate = false)
       case None => return (0, 0)
 
     for
       i <- lab.indices.iterator
       j <- lab(i).indices
-      point = lab(i)(j)
-      if point.isVisited
     do
-      lab(i)(j) = Point.Blocked
-      guard.reset().patrol(track = false)
-      lab(i)(j) = point
+      val point = lab(i)(j)
+      if point.isVisited then
+        lab(i)(j) = Point.Blocked
+        guard.reset().patrol(simulate = true)
+        lab(i)(j) = point
 
     (guard.visited, guard.obstructed)
 
-  def parse(line: String): Option[Input] =
-    Some(line.toCharArray.map(Point.byChar))
+  def parse(line: String): Parsed[Input] =
+    Right(line.toCharArray.map(Point.byChar))
 
   def part12(file: String): (Int, Int) =
     withResource(file)(solve)

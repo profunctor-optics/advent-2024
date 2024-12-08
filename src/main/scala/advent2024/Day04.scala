@@ -53,8 +53,8 @@ case object Day04 extends Day:
       yield 1
       words.sum
 
-  def parse(line: String): Option[Input] =
-    Option.when(line.nonEmpty)(IArray.unsafeFromArray(line.toCharArray))
+  def parse(line: String): Parsed[Input] =
+    Right(IArray.unsafeFromArray(line.toCharArray))
 
   def part1(file: String): Int =
     withResource(file)(TextSearch(_, "XMAS").countAll)

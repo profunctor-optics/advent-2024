@@ -26,8 +26,8 @@ case object Day03 extends Day:
         case None => sum
     loop(true, 0L)
 
-  def parse(line: String): Option[String] =
-    Some(line)
+  def parse(line: String): Parsed[String] =
+    Right(line)
 
   def part1(file: String): Long =
     withResource(file)(compute)

@@ -7,8 +7,9 @@ import scala.util.{Failure, Success, Using}
 
 trait Day extends Product:
   type Input
+  type Parsed[+I] = Either[String, I]
 
-  protected def parse(line: String): Option[Input]
+  protected def parse(line: String): Parsed[Input]
   protected def run(file: String): Unit
 
   private def timed[T](task: => T): (T, Duration) =
@@ -25,8 +26,9 @@ trait Day extends Product:
     println(s"$productPrefix took ${elapsed.toUnit(TimeUnit.SECONDS)}s")
 
   final def withResource[R](file: String)(solve: Iterator[Input] => R): R =
-    def doParse(line: String, i: Int) =
-      parse(line).getOrElse(throw new IllegalArgumentException(s"Unexpected input on line #$i: $line"))
+    def doParse(line: String, i: Int) = parse(line) match
+      case Right(input) => input
+      case Left(reason) => throw new IllegalArgumentException(s"Unexpected input on line #$i ($reason): $line")
     def doSolve(source: Source) =
       solve(source.getLines().zipWithIndex.filterNot(_._1.isBlank).map(doParse))
     Using(Source.fromResource(file))(doSolve) match
