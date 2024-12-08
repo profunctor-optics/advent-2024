@@ -2,12 +2,12 @@ package advent2024
 
 import scala.annotation.tailrec
 
-object Day04 extends Day:
+case object Day04 extends Day:
   type Input = IArray[Char]
 
   class TextSearch(text: IArray[IArray[Char]], word: String):
-    assert(word.nonEmpty, "empty word")
-    assert(text.nonEmpty, "empty text")
+    require(text.nonEmpty, "empty text")
+    require(word.nonEmpty, "empty word")
 
     private val len = word.length
     private val mid = len / 2
@@ -65,6 +65,6 @@ object Day04 extends Day:
   def part2(file: String): Int =
     withResource(file)(TextSearch(_, "MAS").crossAll)
 
-  def main(args: Array[String]): Unit =
-    println(part1("day04.txt"))
-    println(part2("day04.txt"))
+  def run(file: String): Unit =
+    println(part1(file))
+    println(part2(file))

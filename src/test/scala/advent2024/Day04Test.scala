@@ -20,7 +20,7 @@ class Day04Test extends munit.FunSuite:
     assertEquals(search.countAll, 4)
 
   test("count all XMAS in the file"):
-    val actual = Day04.part1("day04.test.txt")
+    val actual = Day04.part1(Day04.testFile)
     assertEquals(actual, 18)
 
   test("cross all MAS in the sample"):
@@ -28,5 +28,5 @@ class Day04Test extends munit.FunSuite:
     assertEquals(search.crossAll, 1)
 
   test("cross all MAS in the file"):
-    val actual = Day04.part2("day04.test.txt")
+    val actual = Day04.part2(Day04.testFile)
     assertEquals(actual, 9)

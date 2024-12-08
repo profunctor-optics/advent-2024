@@ -2,7 +2,7 @@ package advent2024
 
 import scala.collection.immutable.{BitSet, IntMap}
 
-object Day05 extends Day:
+case object Day05 extends Day:
   type Input = Either[(Int, Int), Array[Int]]
 
   private class Printer(var after: IntMap[BitSet]):
@@ -16,7 +16,7 @@ object Day05 extends Day:
 
     // bubble sort
     private def sortedMid(queue: Array[Int], fix: Boolean): Long =
-      def swap(i: Int, j: Int): Boolean =
+      def swap(i: Int, j: Int) =
         val tmp = queue(i)
         queue(i) = queue(j)
         queue(j) = tmp
@@ -24,15 +24,15 @@ object Day05 extends Day:
 
       val length = queue.length
       if length == 1 then return queue.head
-      assert(length % 2 == 1, "even queue")
+      require(length % 2 == 1, "even queue")
 
       val inv = for
         j <- queue.indices.iterator
         i <- 0 until j
         if isAfter(queue(j))(queue(i))
-      yield swap(i, j)
+      yield fix && swap(i, j)
 
-      val fixed = if fix then inv.hasNext && inv.forall(identity) else inv.isEmpty
+      val fixed = if fix then inv.count(identity) > 0 else inv.isEmpty
       if fixed then queue(length / 2).toLong else 0L
 
     def sortedSum(fix: Boolean)(input: Iterator[Input]): Long =
@@ -51,6 +51,6 @@ object Day05 extends Day:
   def part2(file: String): Long =
     withResource(file)(Printer().sortedSum(fix = true))
 
-  def main(args: Array[String]): Unit =
-    println(part1("day05.txt"))
-    println(part2("day05.txt"))
+  def run(file: String): Unit =
+    println(part1(file))
+    println(part2(file))

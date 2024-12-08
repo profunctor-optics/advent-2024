@@ -2,13 +2,13 @@ package advent2024
 
 import scala.annotation.switch
 
-object Day07 extends Day:
+case object Day07 extends Day:
   type Input = (Long, List[Int])
 
   enum Op:
     case Add, Mul, Concat
 
-    private def eval(i: Long, j: Int): Long = (this: @switch) match
+    private def eval(i: Long, j: Int) = (this: @switch) match
       case Add => i + j
       case Mul => i * j
       case Concat => i * Op.orderOf(j) + j
@@ -52,6 +52,6 @@ object Day07 extends Day:
   def part2(file: String): Long =
     withResource(file)(calibratedSum(Op.values*))
 
-  def main(args: Array[String]): Unit =
-    println(part1("day07.txt"))
-    println(part2("day07.txt"))
+  def run(file: String): Unit =
+    println(part1(file))
+    println(part2(file))

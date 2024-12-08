@@ -2,10 +2,10 @@ package advent2024
 
 import scala.collection.mutable
 
-object Day06 extends Day:
+case object Day06 extends Day:
   type Input = Array[Point]
 
-  enum Point(private val char: Char):
+  enum Point(val char: Char):
     case Blank extends Point('.')
     case Blocked extends Point('#')
     case Left extends Point('<')
@@ -17,14 +17,6 @@ object Day06 extends Day:
     def isBlocked: Boolean = this == Blocked
     def isVisited: Boolean = !isBlank && !isBlocked
     override def toString: String = char.toString
-
-    def next: Point = this match
-      case Left => Up
-      case Up => Right
-      case Right => Down
-      case Down => Left
-      case Blank => Blank
-      case Blocked => Blocked
 
   private object Point:
     val byChar = values.iterator.map(p => p.char -> p).toMap
@@ -52,14 +44,22 @@ object Day06 extends Day:
     def reset(): this.type =
       moveTo(si, sj).headTo(lab(si)(sj))
 
-    private def nextPos = heading match
+    private def nextPosition = heading match
       case Point.Left => (i, j - 1)
       case Point.Right => (i, j + 1)
       case Point.Up => (i - 1, j)
       case Point.Down => (i + 1, j)
       case Point.Blank | Point.Blocked => (i, j)
 
-    private def isLeaving: Boolean = heading match
+    private def nextHeading = heading match
+      case Point.Left => Point.Up
+      case Point.Up => Point.Right
+      case Point.Right => Point.Down
+      case Point.Down => Point.Left
+      case Point.Blank => Point.Blank
+      case Point.Blocked => Point.Blocked
+
+    private def isLeaving = heading match
       case Point.Left => j <= 0
       case Point.Up => i <= 0
       case Point.Right => j >= y - 1
@@ -67,7 +67,7 @@ object Day06 extends Day:
       case Point.Blank | Point.Blocked => false
 
     private def isBlocked =
-      val (i, j) = nextPos
+      val (i, j) = nextPosition
       lab(i)(j).isBlocked
 
     private def track(): Unit =
@@ -75,13 +75,13 @@ object Day06 extends Day:
         lab(i)(j) = heading
         visited += 1
 
-    private def move(track: Boolean): Boolean =
+    private def move(track: Boolean) =
       var turned = 0
       while isBlocked && turned < 4 do
-        headTo(heading.next)
+        headTo(nextHeading)
         turned += 1
       if track then this.track()
-      if turned < 4 then moveTo(nextPos)
+      if turned < 4 then moveTo(nextPosition)
       turned > 0
 
     def patrol(track: Boolean): this.type =
@@ -127,7 +127,7 @@ object Day06 extends Day:
   def part12(file: String): (Int, Int) =
     withResource(file)(solve)
 
-  def main(args: Array[String]): Unit =
-    val (visited, obstructed) = part12("day06.txt")
+  def run(file: String): Unit =
+    val (visited, obstructed) = part12(file)
     println(visited)
     println(obstructed)

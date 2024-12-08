@@ -2,8 +2,9 @@ package advent2024
 
 import scala.annotation.tailrec
 
-object Day02 extends Day:
-  type Input = Array[Int]
+case object Day02 extends Day:
+  type Input = IArray[Int]
+
   private type Monotonic = (Input, Int, Int) => Boolean
   private val safeRange = 1 to 3
 
@@ -14,9 +15,6 @@ object Day02 extends Day:
 
   private val decreasing: Monotonic =
     (report, i, j) => increasing(report, j, i)
-
-  def parse(line: String): Option[Input] =
-    Some(line.split("\\s+").map(_.toInt))
 
   private def safeReport(report: Input) =
     def isSafely(monotonic: Monotonic) =
@@ -35,12 +33,15 @@ object Day02 extends Day:
       loop(0, rm = false)
     isSafely(increasing) || isSafely(decreasing)
 
+  def parse(line: String): Option[Input] =
+    Some(IArray.unsafeFromArray(line.split("\\s+").map(_.toInt)))
+
   def part1(file: String): Int =
     withResource(file)(_.count(safeReport))
 
   def part2(file: String): Int =
     withResource(file)(_.count(safeReport1))
 
-  def main(args: Array[String]): Unit =
-    println(part1("day02.txt"))
-    println(part2("day02.txt"))
+  def run(file: String): Unit =
+    println(part1(file))
+    println(part2(file))

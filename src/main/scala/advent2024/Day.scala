@@ -1,19 +1,28 @@
 package advent2024
 
-import java.time.Duration
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.*
 import scala.io.Source
 import scala.util.{Failure, Success, Using}
 
-trait Day:
+trait Day extends Product:
   type Input
 
   protected def parse(line: String): Option[Input]
+  protected def run(file: String): Unit
 
-  final def timed[T](task: => T): (T, Duration) =
+  private def timed[T](task: => T): (T, Duration) =
     val start = System.nanoTime()
     val result = task
     val end = System.nanoTime()
-    (result, Duration.ofNanos(end - start))
+    (result, (end - start).nanos)
+
+  final def testFile: String =
+    s"${productPrefix.toLowerCase}.test.txt"
+
+  final def main(args: Array[String]): Unit =
+    val ((), elapsed) = timed(run(s"${productPrefix.toLowerCase}.txt"))
+    println(s"$productPrefix took ${elapsed.toUnit(TimeUnit.SECONDS)}s")
 
   final def withResource[R](file: String)(solve: Iterator[Input] => R): R =
     def doParse(line: String, i: Int) =
