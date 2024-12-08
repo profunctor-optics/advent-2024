@@ -12,17 +12,16 @@ class Day08Test extends munit.FunSuite:
     |..........
     |....#.....
     |..........
-    |""".stripMargin.trim
+    |""".stripMargin
 
   test("count all interfering anti-nodes"):
-    val actual = Day08.part1(Day08.testFile)
+    val actual = Day08.withTestFile(Day08.part1)
     assertEquals(actual, 14)
 
   test("count all harmonic anti-nodes in the sample"):
-    val puzzle = new Day08.Puzzle(sample.linesIterator.map(IArray.from))
-    val actual = puzzle.countAntiNodes(_.harmonic(_))
+    val actual = Day08.withSample(sample)(Day08.part2)
     assertEquals(actual, 9)
 
   test("count all harmonic anti-nodes in the file"):
-    val actual = Day08.part2(Day08.testFile)
+    val actual = Day08.withTestFile(Day08.part2)
     assertEquals(actual, 34)

@@ -17,9 +17,9 @@ class Day02Test extends munit.FunSuite:
     assert(Day02.safeReport1(IArray(1, 2, 3, 0, 4, 5, 6)))
 
   test("count the safe reports"):
-    val actual = Day02.part1(Day02.testFile)
+    val actual = Day02.withTestFile(Day02.part1)
     assertEquals(actual, 2)
 
   test("count the safe reports with mitigation"):
-    val actual = Day02.part2(Day02.testFile)
+    val actual = Day02.withTestFile(Day02.part2)
     assertEquals(actual, 4)

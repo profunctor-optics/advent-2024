@@ -36,7 +36,7 @@ case object Day07 extends Day:
         case m :: ms => check(m, ms)
         case Nil => false
 
-  private def calibratedSum(ops: Op*)(input: Iterator[Input]) =
+  private def calibratedSum(input: Iterator[Input])(ops: Op*) =
     input.filter(Op.areCalibrated(ops)).map(_._1).sum
 
   def parse(line: String): Parsed[Input] = line.split(':') match
@@ -46,12 +46,12 @@ case object Day07 extends Day:
     case _ =>
       Left("malformed test")
 
-  def part1(file: String): Long =
-    withResource(file)(calibratedSum(Op.Add, Op.Mul))
+  def part1(input: Iterator[Input]): Long =
+    calibratedSum(input)(Op.Add, Op.Mul)
 
-  def part2(file: String): Long =
-    withResource(file)(calibratedSum(Op.values*))
+  def part2(input: Iterator[Input]): Long =
+    calibratedSum(input)(Op.values*)
 
-  def run(file: String): Unit =
-    println(part1(file))
-    println(part2(file))
+  def run(): Unit =
+    printPart(1)(withFile(part1))
+    printPart(2)(withFile(part2))

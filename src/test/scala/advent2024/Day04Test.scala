@@ -7,26 +7,26 @@ class Day04Test extends munit.FunSuite:
     |.A..A.
     |XMAS.S
     |.X....
-    |""".stripMargin.trim
+    |""".stripMargin
 
   val mas = """
     |M.S
     |.A.
     |M.S
-    |""".stripMargin.trim
+    |""".stripMargin
 
   test("count all XMAS in the sample"):
-    val search = Day04.TextSearch(xmas.linesIterator.map(IArray.from), "XMAS")
-    assertEquals(search.countAll, 4)
+    val actual = Day04.withSample(xmas)(Day04.part1)
+    assertEquals(actual, 4)
 
   test("count all XMAS in the file"):
-    val actual = Day04.part1(Day04.testFile)
+    val actual = Day04.withTestFile(Day04.part1)
     assertEquals(actual, 18)
 
   test("cross all MAS in the sample"):
-    val search = Day04.TextSearch(mas.linesIterator.map(IArray.from), "MAS")
-    assertEquals(search.crossAll, 1)
+    val actual = Day04.withSample(mas)(Day04.part2)
+    assertEquals(actual, 1)
 
   test("cross all MAS in the file"):
-    val actual = Day04.part2(Day04.testFile)
+    val actual = Day04.withTestFile(Day04.part2)
     assertEquals(actual, 9)

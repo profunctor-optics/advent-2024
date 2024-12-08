@@ -5,7 +5,7 @@ import scala.annotation.tailrec
 case object Day04 extends Day:
   type Input = IArray[Char]
 
-  final class TextSearch(text: IArray[IArray[Char]], word: String):
+  private class TextSearch(text: IArray[IArray[Char]], word: String):
     private val len = word.length
     private val mid = len / 2
     private val row = text.indices
@@ -56,12 +56,12 @@ case object Day04 extends Day:
   def parse(line: String): Parsed[Input] =
     Right(IArray.unsafeFromArray(line.toCharArray))
 
-  def part1(file: String): Int =
-    withResource(file)(TextSearch(_, "XMAS").countAll)
+  def part1(input: Iterator[Input]): Int =
+    TextSearch(input, "XMAS").countAll
 
-  def part2(file: String): Int =
-    withResource(file)(TextSearch(_, "MAS").crossAll)
+  def part2(input: Iterator[Input]): Int =
+    TextSearch(input, "MAS").crossAll
 
-  def run(file: String): Unit =
-    println(part1(file))
-    println(part2(file))
+  def run(): Unit =
+    printPart(1)(withFile(part1))
+    printPart(2)(withFile(part1))

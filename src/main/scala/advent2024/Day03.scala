@@ -29,12 +29,6 @@ case object Day03 extends Day:
   def parse(line: String): Parsed[String] =
     Right(line)
 
-  def part1(file: String): Long =
-    withResource(file)(compute)
-
-  def part2(file: String): Long =
-    withResource(file)(computeCond)
-
-  def run(file: String): Unit =
-    println(part1(file))
-    println(part2(file))
+  def run(): Unit =
+    printPart(1)(withFile(compute))
+    printPart(2)(withFile(computeCond))

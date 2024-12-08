@@ -3,7 +3,7 @@ package advent2024
 case object Day08 extends Day:
   type Input = IArray[Char]
 
-  final class Puzzle(map: IArray[IArray[Char]]):
+  private class Puzzle(map: IArray[IArray[Char]]):
     private val row = map.indices
     private val col = map.head.indices
     private val blank = Set('.', '#')
@@ -43,12 +43,12 @@ case object Day08 extends Day:
   def parse(line: String): Parsed[Input] =
     Right(IArray.unsafeFromArray(line.toCharArray))
 
-  def part1(file: String): Int =
-    withResource(file)(Puzzle(_).countAntiNodes(_.interfering(_)))
+  def part1(input: Iterator[Input]): Int =
+    Puzzle(input).countAntiNodes(_.interfering(_))
 
-  def part2(file: String): Int =
-    withResource(file)(Puzzle(_).countAntiNodes(_.harmonic(_)))
+  def part2(input: Iterator[Input]): Int =
+    Puzzle(input).countAntiNodes(_.harmonic(_))
 
-  def run(file: String): Unit =
-    println(part1(file))
-    println(part2(file))
+  def run(): Unit =
+    printPart(1)(withFile(part1))
+    printPart(2)(withFile(part2))

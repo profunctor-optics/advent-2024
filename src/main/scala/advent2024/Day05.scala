@@ -33,7 +33,7 @@ case object Day05 extends Day:
       val fixed = if fix then inv.count(identity) > 0 else inv.isEmpty
       if fixed then queue(length / 2).toLong else 0L
 
-    def sortedSum(fix: Boolean)(input: Iterator[Input]): Long =
+    def sortedSum(input: Iterator[Input], fix: Boolean): Long =
       val (pairs, queues) = input.span(_.isLeft)
       for case Left((p, q)) <- pairs do add(p, q)
       (for case Right(queue) <- queues yield sortedMid(queue, fix)).sum
@@ -47,12 +47,12 @@ case object Day05 extends Day:
     case _ =>
       Left("malformed rule")
 
-  def part1(file: String): Long =
-    withResource(file)(Printer().sortedSum(fix = false))
+  def part1(input: Iterator[Input]): Long =
+    Printer().sortedSum(input, fix = false)
 
-  def part2(file: String): Long =
-    withResource(file)(Printer().sortedSum(fix = true))
+  def part2(input: Iterator[Input]): Long =
+    Printer().sortedSum(input, fix = true)
 
-  def run(file: String): Unit =
-    println(part1(file))
-    println(part2(file))
+  def run(): Unit =
+    printPart(1)(withFile(part1))
+    printPart(2)(withFile(part2))

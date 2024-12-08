@@ -36,12 +36,12 @@ case object Day02 extends Day:
   def parse(line: String): Parsed[Input] =
     Right(IArray.unsafeFromArray(line.split("\\s+").map(_.toInt)))
 
-  def part1(file: String): Int =
-    withResource(file)(_.count(safeReport))
+  def part1(input: Iterator[Input]): Int =
+    input.count(safeReport)
 
-  def part2(file: String): Int =
-    withResource(file)(_.count(safeReport1))
+  def part2(input: Iterator[Input]): Int =
+    input.count(safeReport1)
 
-  def run(file: String): Unit =
-    println(part1(file))
-    println(part2(file))
+  def run(): Unit =
+    printPart(1)(withFile(part1))
+    printPart(2)(withFile(part2))

@@ -122,10 +122,7 @@ case object Day06 extends Day:
   def parse(line: String): Parsed[Input] =
     Right(line.toCharArray.map(Point.byChar))
 
-  def part12(file: String): (Int, Int) =
-    withResource(file)(solve)
-
-  def run(file: String): Unit =
-    val (visited, obstructed) = part12(file)
-    println(visited)
-    println(obstructed)
+  def run(): Unit =
+    val (visited, obstructed) = withFile(solve)
+    printPart(1)(visited)
+    printPart(2)(obstructed)
