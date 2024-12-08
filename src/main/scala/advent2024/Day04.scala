@@ -5,7 +5,7 @@ import scala.annotation.tailrec
 case object Day04 extends Day:
   type Input = IArray[Char]
 
-  class TextSearch(text: IArray[IArray[Char]], word: String):
+  final class TextSearch(text: IArray[IArray[Char]], word: String):
     private val len = word.length
     private val mid = len / 2
     private val row = text.indices
