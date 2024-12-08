@@ -24,8 +24,6 @@ case object Day05 extends Day:
 
       val length = queue.length
       if length == 1 then return queue.head
-      require(length % 2 == 1, "even queue")
-
       val inv = for
         j <- queue.indices.iterator
         i <- 0 until j
@@ -41,9 +39,13 @@ case object Day05 extends Day:
       (for case Right(queue) <- queues yield sortedMid(queue, fix)).sum
 
   def parse(line: String): Option[Input] = line.split('|') match
-    case Array(lt, gt) => Some(Left((lt.toInt, gt.toInt)))
-    case Array(line) => Some(Right(line.split(',').map(_.toInt)))
-    case _ => None
+    case Array(lt, gt) =>
+      Some(Left((lt.toInt, gt.toInt)))
+    case Array(line) =>
+      val queue = line.split(',').map(_.toInt)
+      Option.when(queue.length % 2 == 1)(Right(queue))
+    case _ =>
+      None
 
   def part1(file: String): Long =
     withResource(file)(Printer().sortedSum(fix = false))

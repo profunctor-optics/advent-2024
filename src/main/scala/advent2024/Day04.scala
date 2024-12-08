@@ -6,9 +6,6 @@ case object Day04 extends Day:
   type Input = IArray[Char]
 
   class TextSearch(text: IArray[IArray[Char]], word: String):
-    require(text.nonEmpty, "empty text")
-    require(word.nonEmpty, "empty word")
-
     private val len = word.length
     private val mid = len / 2
     private val row = text.indices
@@ -57,7 +54,7 @@ case object Day04 extends Day:
       words.sum
 
   def parse(line: String): Option[Input] =
-    Some(IArray.unsafeFromArray(line.toCharArray))
+    Option.when(line.nonEmpty)(IArray.unsafeFromArray(line.toCharArray))
 
   def part1(file: String): Int =
     withResource(file)(TextSearch(_, "XMAS").countAll)
