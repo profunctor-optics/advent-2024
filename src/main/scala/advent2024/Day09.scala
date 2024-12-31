@@ -3,54 +3,54 @@ package advent2024
 import scala.annotation.tailrec
 
 case object Day09 extends Day:
-  type Input = IndexedSeq[Int]
+  type Input = Array[File]
 
-  final case class File(id: Int, blocks: Int):
+  final case class File(pos: Int, id: Int, blocks: Int):
     def isFree: Boolean = id % 2 == 1
-    def prev(disk: Input): File = File.at(id - 2, disk)
-    def next(disk: Input): File = File.at(id + 1, disk)
-    def take(that: File): File = copy(blocks = that.blocks)
-    def remaining(that: File): File = copy(blocks = this.blocks - that.blocks)
-    def advance(pos: Int): Int = pos + blocks
-    def checksum(pos: Int): Long = (pos.toLong * 2 + blocks - 1) * blocks / 2 * id / 2
+    def isEmpty: Boolean = blocks <= 0
+    def isBefore(that: File): Boolean = this.id < that.id
+    def isBigger(that: File): Boolean = this.blocks >= that.blocks
+    def prev(disk: Input, n: Int = 1): File = disk(id - n)
+    def next(disk: Input, n: Int = 1): File = disk(id + n)
+    def move(that: File): File = this.copy(pos = that.pos, blocks = this.blocks min that.blocks)
+    def take(that: File): File = that.copy(blocks = that.blocks - this.blocks)
+    def drop(that: File): File = this.copy(pos = pos + that.blocks, blocks = this.blocks - that.blocks)
+    def checksum: Long = (pos.toLong * 2 + blocks - 1) * blocks / 2 * id / 2
 
-  object File:
-    def at(id: Int, disk: Input): File = File(id, disk(id))
+  private def blocksChecksum(partial: Boolean)(disk: Input): Long =
+    @tailrec def loop(f: File, g: File, sum: Long): Long =
+      if g.isBefore(f) then sum
+      else if f.isEmpty then loop(f.next(disk), g, sum)
+      else if g.isEmpty || g.isFree then loop(f, g.prev(disk), sum)
+      else if !f.isBefore(g) then sum + g.checksum
+      else if !f.isFree then loop(f.next(disk), g, sum + f.checksum)
+      else if partial then
+        val checksum = g.move(f).checksum
+        if f.isBigger(g) then loop(f.drop(g), g.prev(disk, 2), sum + checksum)
+        else loop(f.next(disk), f.take(g), sum + checksum)
+      else
+        val free = f.id.until(g.id).by(2).iterator.map(disk)
+        val checksum = free.find(_.isBigger(g)) match
+          case Some(f) =>
+            disk(f.id) = f.drop(g)
+            g.move(f).checksum
+          case None =>
+            g.checksum
+        loop(disk(f.id), g.prev(disk, 2), sum + checksum)
 
-  private def blocksChecksum(disk: Input): Long =
-    @tailrec def loop(f: File, g: File, pos: Int, sum: Long): Long =
-      if f.id > g.id then sum
-      else if f.isFree then
-        if f.blocks >= g.blocks then loop(f.remaining(g), g.prev(disk), g.advance(pos), sum + g.checksum(pos))
-        else loop(f.next(disk), g.remaining(f), f.advance(pos), sum + g.take(f).checksum(pos))
-      else if f.id == g.id then loop(f, g.prev(disk), g.advance(pos), sum + g.checksum(pos))
-      else loop(f.next(disk), g, f.advance(pos), sum + f.checksum(pos))
-
-    val size = disk.size
-    if size <= 2 then 0
-    else loop(File.at(0, disk), File.at(size - 2 + size % 2, disk), 0, 0)
-
-  private def filesChecksum(disk: Input): Long =
-    @tailrec def loop(f: File, gId: Int, pos: Int, sum: Long): Long =
-      if f.id > gId then sum
-      else if f.isFree then
-        gId.until(f.id).by(-2).find(disk(_) <= f.blocks).map(File.at(_, disk)) match
-          case Some(g) => loop(f.remaining(g), gId - 2, g.advance(pos), sum + g.checksum(pos))
-          case None => loop(f.next(disk), gId - 2, f.advance(pos), sum)
-      else loop(f.next(disk), gId, f.advance(pos), sum + f.checksum(pos))
-
-    val size = disk.size
-    if size <= 2 then 0
-    else loop(File.at(0, disk), size - 2 + size % 2, 0, 0)
+    if disk.sizeIs <= 2 then 0
+    else loop(disk.head, disk.last, 0)
 
   def parse(line: String): Parsed[Input] =
-    Right(line.map(_.asDigit))
+    val files = line.iterator.scanLeft(File(pos = 0, id = -1, blocks = 0)):
+      case (f, b) => File(pos = f.pos + f.blocks, id = f.id + 1, blocks = b.asDigit)
+    Right(files.drop(1).toArray)
 
   def part1(input: Iterator[Input]): Long =
-    input.map(blocksChecksum).sum
+    input.map(blocksChecksum(partial = true)).sum
 
   def part2(input: Iterator[Input]): Long =
-    input.map(filesChecksum).sum
+    input.map(blocksChecksum(partial = false)).sum
 
   def run(): Unit =
     printPart(1)(withFile(part1))

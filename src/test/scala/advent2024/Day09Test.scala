@@ -14,4 +14,8 @@ class Day09Test extends munit.FunSuite:
 
   test("calculate the files checksum of the small sample"):
     val actual = Day09.withSample(smallSample)(Day09.part2)
-    assertEquals(actual, 60L)
+    assertEquals(actual, 132L)
+
+  test("calculate the files checksum of the big sample"):
+    val actual = Day09.withSample(bigSample)(Day09.part2)
+    assertEquals(actual, 2858L)
