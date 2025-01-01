@@ -34,13 +34,11 @@ case object Day10 extends Day:
     val positions = Array.fill(10)(List.empty[Pos])
     val trails = Array.ofDim[T](n, m)
 
-    for
-      i <- map.indices
-      j <- map(i).indices
-    do
-      val h = map(i)(j)
-      if h < positions.length
-      then positions(h) ::= Pos(i, j)
+    for i <- map.indices do
+      for j <- map(i).indices do
+        val h = map(i)(j)
+        if h < positions.length
+        then positions(h) ::= Pos(i, j)
 
     def reachable(pos: Pos, h: Int): T =
       if h == 9 then return T.single(pos)
@@ -53,10 +51,8 @@ case object Day10 extends Day:
       if j < m - 1 && map(i)(j + 1) == h1 then reachable += trails(i)(j + 1)
       reachable
 
-    for
-      h <- positions.indices.reverse
-      p <- positions(h)
-    do trails(p.i)(p.j) = reachable(p, h)
+    for h <- positions.indices.reverse
+    do for p <- positions(h) do trails(p.i)(p.j) = reachable(p, h)
     positions.head.iterator.map(p => trails(p.i)(p.j).measure).sum
 
   def parse(line: String): Parsed[Input] =
