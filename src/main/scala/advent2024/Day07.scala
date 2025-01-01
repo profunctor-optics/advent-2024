@@ -20,7 +20,9 @@ case object Day07 extends Day:
 
   private object Op:
     private val pow10 =
-      Array(0, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000)
+      val pow10 = Iterator.iterate(1)(_ * 10).takeWhile(_ > 0).toArray
+      pow10(0) = 0
+      IArray.unsafeFromArray(pow10)
 
     private def orderOf(m: Int) =
       pow10(pow10.indexWhere(m < _))
