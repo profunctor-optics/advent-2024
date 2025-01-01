@@ -1,17 +1,6 @@
 package advent2024
 
 class Day10Test extends munit.FunSuite:
-  val bigSample = """
-    |89010123
-    |78121874
-    |87430965
-    |96549874
-    |45678903
-    |32019012
-    |01329801
-    |10456732
-    |""".stripMargin
-
   test("calculate trail score of sample #1"):
     val sample = """
       |0123
@@ -65,8 +54,8 @@ class Day10Test extends munit.FunSuite:
     val actual = Day10.withSample(sample)(Day10.part1)
     assertEquals(actual, 3)
 
-  test("calculate trail score of the big sample"):
-    val actual = Day10.withSample(bigSample)(Day10.part1)
+  test("calculate trail score of the test file"):
+    val actual = Day10.withTestFile(Day10.part1)
     assertEquals(actual, 36)
 
   test("calculate trail rating of sample #1"):
@@ -110,6 +99,6 @@ class Day10Test extends munit.FunSuite:
     val actual = Day10.withSample(sample)(Day10.part2)
     assertEquals(actual, 227)
 
-  test("calculate trail rating of the big sample"):
-    val actual = Day10.withSample(bigSample)(Day10.part2)
+  test("calculate trail rating of the test file"):
+    val actual = Day10.withTestFile(Day10.part2)
     assertEquals(actual, 81)
